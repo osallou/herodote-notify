@@ -1,0 +1,24 @@
+language: go
+sudo: false
+matrix:
+  include:
+  - go: 1.x
+    env: LATEST=true
+  - go: 1.10.x
+  - go: 1.11.x
+script:
+- go vet
+- go test -v ./...
+- if [ "${LATEST}" = "true" ]; then GOOS=linux GOARCH=amd64 go build -ldflags "-X
+  main.Version=`git rev-parse --short HEAD`" -o hero-notify.linux.amd64 hero-notify.go;
+  fi
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: jykdvrxw7GGh7lfFSDkG8jiTDAWmXU8iPwEOIkM5EXx3WFUbbXZvKNHe0SMTzKc1DGcHgLjm9hnAFgh7fgl53QRwWIxypIYes6Pk3khveT0/Y8PYfYCZKu/6CeSn6DazoqWObezXtWeXVOCYuYeRGG6XP2J34MDr89Ij6EBCU1TO2wJGOTH2gC7PQ4UafFMueZGpZaBRZQEITWCN5WGWIcbNM262p0KWfV8BkKgcTtZGvg/p6rxxJtWJXuLx+ygiepI2ns3P0AwWyLNtXdRi9+VZDyQHxOjtp36kciwFupVQCI4HimImah+BAi7tQYztJ0yTdGKh+944ddFpwi49zeFmuYbNdiuT4zrvE7rcBjm188ScyaTQS3X6kEuVOqhuoQ7bvUHw3//QKjCSLB37N+kYNrGQaYSsG0u9XkRZPzaI9qBDiAnBHKw3uqhg2DDip1KsTh1l1SIUJAejAmDr7+P+bfdfsYv7bBMUyMBjQ8qNJO8thgwYd2Dzw1vkq9yCQhZSAwN1YWdsFRlLsJg/hWht7BVocYcvgfNsOBeKlKHTlk/PJWBVqm2hGf4VAIz0aFrF09NzXf5D/cu7y8IFu0mSC3UhtyOW2vAbB7sJ9fboP0/24MZOsLGPErWVBAmu3rWM4Of8VgcPHf56pATXF7jSZr4Nhvqp4OuGaXp4eps=
+  file:
+    - hero-notify.linux.amd64
+  on:
+    repo: osallou/herodote-notify
+    tags: true
