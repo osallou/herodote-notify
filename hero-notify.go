@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 )
 
 type arrayFlags []string
@@ -32,10 +33,14 @@ var Version string
 
 func main() {
 	var server string
+	var job string
+	var status string
 	var helpVersion = false
 
 	flag.BoolVar(&helpVersion, "version", false, "Show version")
-	flag.StringVar(&server, "url", "", "herodote job status url")
+	flag.StringVar(&server, "server", "", "herodote job status url")
+	flag.StringVar(&job, "job", "", "job identifier")
+	flag.StringVar(&status, "status", "", "job status")
 	flag.Parse()
 
 	if helpVersion {
@@ -43,8 +48,9 @@ func main() {
 		return
 	}
 
+	url := []string{server, "jobs", job, status}
 	byteData := make([]byte, 0)
-	req, _ := http.NewRequest("PUT", server, bytes.NewReader(byteData))
+	req, _ := http.NewRequest("PUT", strings.Join(url, "/"), bytes.NewReader(byteData))
 	client := &http.Client{}
 	_, err := client.Do(req)
 	if err != nil {
